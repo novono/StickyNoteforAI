@@ -1,0 +1,53 @@
+name: Publish Mac release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: macos-15
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Check release version
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          version=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' Info.plist)
+          test "$RELEASE_TAG" = "v$version"
+          test -f "docs/releases/$RELEASE_TAG.md"
+      - name: Build application
+        run: ./build.sh
+      - name: Package and test downloadable application
+        run: ./scripts/package-release.sh
+      - name: Publish verified packages
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          if gh release view "$RELEASE_TAG" --json isDraft > /tmp/paper-release-state.json 2>/dev/null; then
+            # A retry may finish a draft, but must never replace an already published build.
+            python3 -c 'import json; assert json.load(open("/tmp/paper-release-state.json"))["isDraft"], "Release already published"'
+          else
+            gh release create "$RELEASE_TAG" --verify-tag --draft \
+              --title "贴贴 ${RELEASE_TAG#v} · Mac 桌面便签" \
+              --notes-file "docs/releases/$RELEASE_TAG.md"
+          fi
+          gh release upload "$RELEASE_TAG" \
+            dist/PaperMemory-macOS-arm64.dmg \
+            dist/PaperMemory-macOS-arm64.zip \
+            dist/SHA256SUMS --clobber
+          gh release edit "$RELEASE_TAG" --draft=false --latest

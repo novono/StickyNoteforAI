@@ -77,3 +77,18 @@ iconutil -c icns build/AppIcon.iconset -o Resources/AppIcon.icns
 - 数据写入通过 `Store` 的事务与 `NoteDocuments`，避免绕过修订号检查。
 - 新的 AI 命令在 `NoteService` 实现，MCP 负责协议适配；变更时同步工具 schema、文档和集成验证。
 - 调整窗口或动画时，保留同窗展开、草稿保存、删除中断与停稳后持久化约束，详见 [架构说明](ARCHITECTURE.md)。
+
+## 发布安装包
+
+```sh
+./build.sh
+./scripts/package-release.sh
+```
+
+输出到 `dist/`：`PaperMemory-macOS-arm64.dmg`、`PaperMemory-macOS-arm64.zip` 和 `SHA256SUMS`。DMG 含应用、指向 `/Applications` 的快捷方式和安装说明；ZIP 只含应用。打包脚本检查架构、版本与签名，验证 DMG 完整性，并从 ZIP 重新解压应用运行 CLI/MCP 集成测试。打包需要 macOS 自带的 `hdiutil`、`ditto` 和 Python 3。
+
+正式发布前，在有图形桌面的 Mac 上运行完整 `./verify.sh` 并检查实际界面。更新版本号、`CHANGELOG.md`，新增 `docs/releases/v<版本>.md`；提交后推送对应标签，例如 `v1.3.1`。`.github/workflows/release.yml` 会在 GitHub 的 `macos-15` 托管环境构建、打包、验证，并先上传到草稿，成功后公开 Release。只使用当前仓库的临时 `GITHUB_TOKEN`，无需个人访问令牌。
+
+发布资产采用固定文件名，使 README 的 `releases/latest/download/…` 链接随最新版本自动更新。已公开的版本不会被工作流覆盖；重试只可继续尚未公开的草稿。正式版本标签与应用版本必须一致，修改已发布内容时应增加新版本。
+
+当前为 **ad-hoc 签名，未做 Developer ID 签名与 Apple 公证**。代码签名完整性检查通过不等于通过 Gatekeeper 或 Apple 公证；README、安装说明与 Release 必须如实保留这一状态。

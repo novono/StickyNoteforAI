@@ -15,22 +15,22 @@
 
 ## 先确认应用路径
 
-建议按照 [README 的安装步骤](../README.md#在-mac-上运行)，放到 `~/Applications/PaperMemory.app`。下面的终端命令默认使用此位置。
+按照 [README 的安装步骤](../README.md#在-mac-上运行)，从 DMG 将应用拖入“应用程序”，先成功打开一次。下面的配置默认使用 `/Applications/PaperMemory.app`。
 
 在终端运行：
 
 ```sh
-printf '{}' | "$HOME/Applications/PaperMemory.app/Contents/MacOS/PaperMemory" --cli health
+printf '{}' | /Applications/PaperMemory.app/Contents/MacOS/PaperMemory --cli health
 ```
 
 出现 `"ok":true`、版本和数据目录，说明应用可用。这个命令只检查状态，不创建便签。
 
-如果放在系统“应用程序”目录，改用 `/Applications/PaperMemory.app/Contents/MacOS/PaperMemory`。不要只填 `.app` 路径；要指向里面的可执行文件。
+如果旧版放在个人目录 `~/Applications`，请继续使用实际位置，例如 `/Users/你的用户名/Applications/PaperMemory.app/Contents/MacOS/PaperMemory`。不要只填 `.app` 路径；要指向里面的可执行文件。
 
-JSON / TOML 配置要使用**完整绝对路径**。在终端运行下面的命令，可得到自己的路径：
+JSON / TOML 配置要使用**完整绝对路径**。默认安装的完整路径是：
 
 ```sh
-printf '%s\n' "$HOME/Applications/PaperMemory.app/Contents/MacOS/PaperMemory"
+/Applications/PaperMemory.app/Contents/MacOS/PaperMemory
 ```
 
 ## Codex
@@ -41,7 +41,7 @@ printf '%s\n' "$HOME/Applications/PaperMemory.app/Contents/MacOS/PaperMemory"
 
 ```sh
 codex mcp add paper-memory -- \
-  "$HOME/Applications/PaperMemory.app/Contents/MacOS/PaperMemory" --mcp
+  /Applications/PaperMemory.app/Contents/MacOS/PaperMemory --mcp
 
 codex mcp get paper-memory
 ```
@@ -50,11 +50,11 @@ codex mcp get paper-memory
 
 ### 方式二：直接写配置
 
-没有 CLI 时，在 `~/.codex/config.toml` 中合并下面一段，将 `你的用户名` 替换为真实用户名；已有 `paper-memory` 配置时更新原段，不重复添加：
+没有 CLI 时，在 `~/.codex/config.toml` 中合并下面一段；如果装在其他位置，请替换为实际绝对路径。已有 `paper-memory` 配置时更新原段，不重复添加：
 
 ```toml
 [mcp_servers.paper-memory]
-command = "/Users/你的用户名/Applications/PaperMemory.app/Contents/MacOS/PaperMemory"
+command = "/Applications/PaperMemory.app/Contents/MacOS/PaperMemory"
 args = ["--mcp"]
 ```
 
@@ -84,14 +84,14 @@ ditto skill "$HOME/.agents/skills/paper-memory"
 ## Claude Desktop
 
 1. 打开 Mac 菜单栏中的 Claude → Settings → Developer → Edit Config。
-2. 在 `~/Library/Application Support/Claude/claude_desktop_config.json` 中合并以下内容。替换用户名，保留已有的其他服务器。
+2. 在 `~/Library/Application Support/Claude/claude_desktop_config.json` 中合并以下内容。如果装在其他位置，请修改应用路径；保留已有的其他服务器。
 3. 完全退出并重新打开 Claude Desktop，再发送本页的只读验证请求。
 
 ```json
 {
   "mcpServers": {
     "paper-memory": {
-      "command": "/Users/你的用户名/Applications/PaperMemory.app/Contents/MacOS/PaperMemory",
+      "command": "/Applications/PaperMemory.app/Contents/MacOS/PaperMemory",
       "args": ["--mcp"]
     }
   }
@@ -106,7 +106,7 @@ ditto skill "$HOME/.agents/skills/paper-memory"
 
 ```sh
 claude mcp add --transport stdio --scope user paper-memory -- \
-  "$HOME/Applications/PaperMemory.app/Contents/MacOS/PaperMemory" --mcp
+  /Applications/PaperMemory.app/Contents/MacOS/PaperMemory --mcp
 
 claude mcp get paper-memory
 ```
@@ -115,7 +115,7 @@ claude mcp get paper-memory
 
 ## Cursor
 
-1. 打开或创建 `~/.cursor/mcp.json`，使用上方 **Claude Desktop 的同一段 JSON**，替换成自己的绝对路径。
+1. 打开或创建 `~/.cursor/mcp.json`，使用上方 **Claude Desktop 的同一段 JSON**，确认应用路径与实际安装位置一致。
 2. 保留已有的 `mcpServers` 条目，只增加 `paper-memory`。
 3. 重新加载 Cursor，在 Agent 会话中检查该工具已启用，再发送只读验证请求。
 
@@ -154,6 +154,7 @@ AI 应先获取最新修订号，再完成该便签；它会进入“已收起�
 
 | 现象 | 处理 |
 | --- | --- |
+| 首次打开被 macOS 阻止 | 先从“应用程序”打开一次，再按 [README 的首次打开说明](../README.md#在-mac-上运行) 处理；完成后再接入 AI。 |
 | 找不到文件 / 无法启动服务器 | 先执行 `--cli health`；检查完整路径、安装位置，以及是否带了 `--mcp`。 |
 | AI 说没有便签工具 | 新建本地会话或重启客户端，检查 MCP 是否启用；确认任务运行在这台 Mac，而非远程主机。 |
 | JSON / TOML 报错 | 合并到原配置，不重复同名键；JSON 不能有注释或尾逗号，Codex 使用 TOML。 |

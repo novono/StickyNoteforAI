@@ -6,6 +6,10 @@
 
 把对话里的待办和想法，贴到 Mac 桌面。
 
+**[下载 Mac 版（DMG）](https://github.com/novono/StickyNoteforAI/releases/latest/download/PaperMemory-macOS-arm64.dmg)** · [ZIP 压缩包](https://github.com/novono/StickyNoteforAI/releases/latest/download/PaperMemory-macOS-arm64.zip) · [版本与校验文件](https://github.com/novono/StickyNoteforAI/releases/latest)
+
+Apple 芯片（M 系列）· macOS 14+ · 无需编译。首次打开方法见[安装说明](#在-mac-上运行)。
+
 **贴贴（PaperMemory）** 是用 Swift / AppKit 编写的原生便签应用。你可以直接在纸上写，也可以让支持 MCP 的 AI 写入、更新、附上图片，并参考已有内容归类。
 
 没有顶栏和额外标题。小便签展开后仍是同一张纸，文字、图片与上下文放在里面。
@@ -38,27 +42,17 @@
 
 ## 在 Mac 上运行
 
-目前的构建目标是 **Apple Silicon、macOS 14 或更新版本**。开发和验证需要 Xcode Command Line Tools，测试另需 Python 3。
+1. [下载安装包](https://github.com/novono/StickyNoteforAI/releases/latest/download/PaperMemory-macOS-arm64.dmg)，双击打开 DMG。
+2. 将 `PaperMemory.app` 拖到旁边的 `Applications`（应用程序）。
+3. 在“应用程序”中打开贴贴，从菜单栏或便签右键新建便签。贴贴常驻菜单栏，没有 Dock 图标。
 
-```sh
-xcode-select --install  # 尚未安装命令行工具时执行
-git clone https://github.com/novono/StickyNoteforAI.git
-cd StickyNoteforAI
-./build.sh
-open build/PaperMemory.app
-```
+支持 **Apple 芯片（M 系列）Mac，macOS 14 或更新版本**，暂不提供 Intel 安装包。应用、图标和中英文手写字体都已包含，普通使用者不需要安装 Xcode、Python 或其他开发工具。
 
-构建不需要在线模型、API Key、Swift 包依赖或额外下载字体。生成的应用位于 `build/PaperMemory.app`，采用本地 ad-hoc 签名，未做 Apple 公证。仓库中的字体、图标和授权文件会一起打包。
+**首次打开：** 当前公开版本采用 ad-hoc 签名，尚未经过 Apple Developer ID 签名与公证。如果 macOS 阻止打开，请先尝试启动一次，再进入 **系统设置 → 隐私与安全性 → 仍要打开**，按系统提示确认。请确认下载来自本仓库，无需关闭系统安全检查。操作依据 [Apple 官方说明](https://support.apple.com/zh-cn/102445)。
 
-如需固定安装位置，可以在退出正在运行的贴贴后复制到自己的“应用程序”目录：
+也可下载 [ZIP 版本](https://github.com/novono/StickyNoteforAI/releases/latest/download/PaperMemory-macOS-arm64.zip)，解压后把应用移入“应用程序”。Release 页中的 `Source code` 是源码，普通安装请选择 `.dmg` 或 `.zip` 应用包。需要核对完整性时，可使用同页的 `SHA256SUMS`。
 
-```sh
-mkdir -p "$HOME/Applications"
-ditto build/PaperMemory.app "$HOME/Applications/PaperMemory.app"
-open "$HOME/Applications/PaperMemory.app"
-```
-
-也可以指定输出位置：`./build.sh /absolute/path/PaperMemory.app`。
+**更新：** 先从菜单栏退出贴贴，再用新版替换原位置的应用。便签和图片保存在用户资料目录，替换应用不会删除它们。若安装在 `~/Applications`，更新时保持原位置；AI 连接中的路径也应与实际安装位置一致。
 
 ## 日常操作
 
@@ -82,11 +76,11 @@ open "$HOME/Applications/PaperMemory.app"
 
 按你使用的工具查看分步说明：[Codex](docs/AI-CLIENTS.md#codex) · [Claude Desktop](docs/AI-CLIENTS.md#claude-desktop) · [Claude Code](docs/AI-CLIENTS.md#claude-code) · [Cursor](docs/AI-CLIENTS.md#cursor)。教程包括安装检查、连接验证、常用话术和故障排查。
 
-Codex CLI 用户可以直接添加（假设应用安装在自己的 `Applications` 目录）：
+Codex CLI 用户可以直接添加（按上方步骤安装到“应用程序”后）：
 
 ```sh
 codex mcp add paper-memory -- \
-  "$HOME/Applications/PaperMemory.app/Contents/MacOS/PaperMemory" --mcp
+  /Applications/PaperMemory.app/Contents/MacOS/PaperMemory --mcp
 ```
 
 然后开启新的本地会话，说：“请先读取已有便签，再把刚才确定的下一步贴到桌面。”其他安装位置、无需 CLI 的配置方法和可选 Skill 安装，见 [完整接入教程](docs/AI-CLIENTS.md)。命令形式依据 [OpenAI 官方 MCP 文档](https://developers.openai.com/codex/mcp)。
@@ -132,10 +126,18 @@ AI 应先调用 `paper_context`，读取已有分类与便签，再决定创建�
 
 ## 开发与验证
 
+需要自行构建时，安装 Xcode Command Line Tools；验证另需 Python 3。构建只依赖系统框架，不需要 API Key、Swift 包或额外下载字体。
+
 ```sh
+xcode-select --install  # 尚未安装命令行工具时执行
+git clone https://github.com/novono/StickyNoteforAI.git
+cd StickyNoteforAI
 ./build.sh
+open build/PaperMemory.app
 ./verify.sh
 ```
+
+应用输出到 `build/PaperMemory.app`，也可指定位置：`./build.sh /absolute/path/PaperMemory.app`。发布打包方式见[开发说明](docs/DEVELOPMENT.md#发布安装包)。
 
 完整验证需要**已登录的 Mac 图形桌面会话**，会短暂打开独立测试窗口。覆盖 CLI/MCP、并发写入、修订冲突、图文保存、桌面层级、展开收起、贴撕动画、惯性拖动、纸张老化与阅读区域对比度。测试输出和生成的预览保留在 `build/check.*`。
 

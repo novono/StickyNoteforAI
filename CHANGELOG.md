@@ -2,6 +2,8 @@
 
 ## 1.3.1
 
+- 提供可直接安装的 Apple 芯片 Mac DMG / ZIP，附 SHA-256 校验文件与首次打开说明。
+- 增加标签触发的 GitHub Release 自动构建、安装包检查与 MCP 集成验证。
 - 重新设计应用图标：奶油黄纸张、手写勾选与右下卷角，保留透明边缘。
 - 从同一 PNG 母版导出标准 macOS 图标尺寸，提供可重复的图标打包脚本。
 - 新增 Codex、Claude Desktop、Claude Code 和 Cursor 接入教程，补充 Skill 安装、首次验证、使用话术与排错。

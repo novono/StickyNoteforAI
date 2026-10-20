@@ -1,0 +1,25 @@
+#!/bin/zsh
+set -euo pipefail
+if [[ -n "${PAPER_MEMORY_APP:-}" ]]; then
+  TASK_APP="$PAPER_MEMORY_APP"
+elif [[ -x "$HOME/Applications/PaperMemory.app/Contents/MacOS/PaperMemory" ]]; then
+  TASK_APP="$HOME/Applications/PaperMemory.app"
+else
+  TASK_APP="/Applications/PaperMemory.app"
+fi
+TASK_BIN="$TASK_APP/Contents/MacOS/PaperMemory"
+TASK_METHOD="${1:-health}"
+if [[ ! -x "$TASK_BIN" ]]; then
+  print -u2 "没有找到贴贴应用：$TASK_APP"
+  exit 1
+fi
+if [[ "$TASK_METHOD" == "mcp" ]]; then
+  exec "$TASK_BIN" --mcp
+fi
+"$TASK_BIN" --cli "$TASK_METHOD"
+case "$TASK_METHOD" in
+  create|update|complete|restore|attach|organize|open)
+    if [[ "${PAPER_MEMORY_NO_LAUNCH:-}" != "1" ]]; then
+      /usr/bin/open -g "$TASK_APP"
+    fi ;;
+esac

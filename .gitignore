@@ -1,0 +1,17 @@
+.DS_Store
+build/
+dist/
+*.app/
+*.dSYM/
+__pycache__/
+*.py[cod]
+.venv/
+.env
+.env.*
+!.env.example
+
+# Local test data and render output.
+paper-check.*/
+paper-test-*/
+motion-preview/
+AppIcon.iconset/

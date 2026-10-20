@@ -1,6 +1,6 @@
 import Foundation
 
-let appVersion = "1.3.0"
+let appVersion = "1.3.1"
 let summaryLimit = 60
 let appID = "local.william.PaperMemory"
 let changeEvent = Notification.Name("local.william.PaperMemory.changed")

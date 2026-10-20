@@ -1,5 +1,7 @@
 # AI 接口
 
+首次接入请先看 [Codex、Claude 和 Cursor 使用教程](AI-CLIENTS.md)，本页是开发者使用的工具与字段参考。
+
 贴贴使用同一个可执行文件提供图形界面、MCP server 与 JSON CLI。数据保存在本机，接口不需要 API Key，也不启动 HTTP 服务。
 
 ## MCP

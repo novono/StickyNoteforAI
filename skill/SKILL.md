@@ -37,7 +37,7 @@ CLI 安全调用示例（文本通过 stdin，不拼接进 shell 命令）：
 import json, subprocess
 from pathlib import Path
 p = subprocess.run(
-    [str(Path.home() / ".codex/skills/paper-memory/scripts/paper-memory"), "create"],
+    [str(Path.home() / ".agents/skills/paper-memory/scripts/paper-memory"), "create"],
     input=json.dumps({"summary":"确认供应商交期\n核对首批数量", "category":"采购跟进", "sourceName":"Codex"}, ensure_ascii=False),
     text=True, capture_output=True, check=True)
 print(p.stdout)

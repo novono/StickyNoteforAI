@@ -65,9 +65,11 @@ xcrun swift scripts/verify-fonts.swift Resources
 
 ```sh
 mkdir -p build
-xcrun swift scripts/make-icon.swift build/AppIcon.iconset
+xcrun swift scripts/make-icon.swift Resources/AppIcon.png build/AppIcon.iconset
 iconutil -c icns build/AppIcon.iconset -o Resources/AppIcon.icns
 ```
+
+`Resources/AppIcon.png` 是已经确定的透明图标母版；脚本只缩放并打包，不重新绘制图案。设计说明与生成提示词见 [图标设计](ICON-DESIGN.md)。
 
 ## 提交约定
 

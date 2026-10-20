@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="Resources/AppIcon.png" width="120" alt="贴贴应用图标：奶油黄纸张、手写勾选与右下卷角">
+</p>
+
 # StickyNote for AI · 贴贴
 
 把对话里的待办和想法，贴到 Mac 桌面。
@@ -75,6 +79,17 @@ open "$HOME/Applications/PaperMemory.app"
 “桌面小组件”使用应用自己的原生窗口，**不属于 WidgetKit 小组件图库**；贴贴需要保持运行。
 
 ## 接入 AI
+
+按你使用的工具查看分步说明：[Codex](docs/AI-CLIENTS.md#codex) · [Claude Desktop](docs/AI-CLIENTS.md#claude-desktop) · [Claude Code](docs/AI-CLIENTS.md#claude-code) · [Cursor](docs/AI-CLIENTS.md#cursor)。教程包括安装检查、连接验证、常用话术和故障排查。
+
+Codex CLI 用户可以直接添加（假设应用安装在自己的 `Applications` 目录）：
+
+```sh
+codex mcp add paper-memory -- \
+  "$HOME/Applications/PaperMemory.app/Contents/MacOS/PaperMemory" --mcp
+```
+
+然后开启新的本地会话，说：“请先读取已有便签，再把刚才确定的下一步贴到桌面。”其他安装位置、无需 CLI 的配置方法和可选 Skill 安装，见 [完整接入教程](docs/AI-CLIENTS.md)。命令形式依据 [OpenAI 官方 MCP 文档](https://developers.openai.com/codex/mcp)。
 
 应用同时是一个通过标准输入/输出通信的 MCP server。将应用内可执行文件作为命令，传入 `--mcp`：
 
